@@ -1,26 +1,25 @@
 # George Harper — GitHub Pages Portfolio
 
-A dependency-free JAMstack-style portfolio inspired by the supplied Byrne Business screenshots.
+Pure HTML, CSS and vanilla JavaScript portfolio styled to match the Byrne Business visual design language.
 
-## Stack
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- HTML5 Canvas API
-- No frameworks, package manager or build step
+## Upload to GitHub Pages
 
-## GitHub Pages
-Upload the contents of this folder to `George-Harper/George-Harper.github.io` and enable GitHub Pages from the repository's Pages settings.
+Put the **contents of this folder directly into the root of** `George-Harper/George-Harper.github.io` so that `index.html` is at the repository root.
 
-## Files
-- `index.html` — home
-- `experience.html` — career history and skills
-- `education.html` — qualifications
-- `projects.html` — project highlights
-- `contact.html` — contact details
-- `cv.html` — web CV
-- `styles.css` — visual system
-- `script.js` — Canvas roadmap and expandable experience cards
-- `nav.js` — active navigation state
-- `assets/george-harper.png` — supplied profile photo
-- `assets/george-harper-cv.pdf` — PDF CV
+The site includes:
+- Animated HTML5 Canvas hexagon background
+- Interactive, animated Canvas life road-map
+- Clickable roadmap nodes with information modals
+- Drag-to-pan and scroll-to-zoom roadmap
+- Responsive layout
+- George Harper profile photo in `assets/george-harper.png`
+- CV PDF in `assets/george-harper-cv.pdf`
+- `CNAME` configured for `harperbusiness.co.uk`
+
+## Custom domain
+
+GitHub Pages should be configured to use:
+
+`harperbusiness.co.uk`
+
+DNS should contain the four GitHub Pages A records and a `www` CNAME pointing to `george-harper.github.io`.
