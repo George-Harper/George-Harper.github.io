@@ -1,6 +1,12 @@
-(function(){
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/*
+ * George Harper Portfolio — Canvas Animation
+ *
+ * Animation is intentionally always enabled.
+ * This avoids the previous prefers-reduced-motion check preventing
+ * the Byrne-style moving hexagons and roadmap lines from rendering.
+ */
 
+(function(){
   // Animated full-page hexagonal background, matching the original visual language.
   const bg = document.createElement('canvas');
   bg.id = 'hex-canvas';
@@ -17,7 +23,7 @@
     for(let y=-rowH;y<bh+rowH;y+=rowH){
       const row=Math.round(y/rowH); const offset=(row%2)*44;
       for(let x=-spacing;x<bw+spacing;x+=spacing){
-        hexes.push({x:x+offset+rand(-5,5),y:y+rand(-4,4),r:25+rand(-2,2),phase:rand(0,Math.PI*2),speed:rand(.00025,.0007),drift:rand(.10,.30)});
+        hexes.push({x:x+offset+rand(-5,5),y:y+rand(-4,4),r:25+rand(-2,2),phase:rand(0,Math.PI*2),speed:rand(.0008,.0018),drift:rand(2.0,5.5),pulseSpeed:rand(.0008,.0018)});
       }
     }
   }
@@ -27,12 +33,12 @@
   function drawBg(t){
     const s=bdpr;bctx.setTransform(s,0,0,s,0,0);bctx.clearRect(0,0,bw,bh);bctx.fillStyle='#07111b';bctx.fillRect(0,0,bw,bh);
     for(const h of hexes){
-      const drift=reduced?0:Math.sin(t*h.speed+h.phase)*h.drift;
-      const pulse=reduced?.82:.72+.16*(.5+.5*Math.sin(t*h.speed*1.8+h.phase));
+      const drift=Math.sin(t*h.speed+h.phase)*h.drift;
+      const pulse=.28+.42*(.5+.5*Math.sin(t*h.pulseSpeed+h.phase));
       hexPath(bctx,h.x+drift,h.y+drift*.5,h.r);
       bctx.lineWidth=1;bctx.strokeStyle=`rgba(19,89,126,${pulse})`;bctx.stroke();
     }
-    if(!reduced) requestAnimationFrame(drawBg);
+    requestAnimationFrame(drawBg);
   }
   resizeBg(); window.addEventListener('resize',resizeBg); drawBg(0);
 
@@ -80,20 +86,20 @@
       const ap=worldToScreen(a.x,a.y),bp=worldToScreen(b.x,b.y);
       ctx.save();
       ctx.setLineDash([7,8]);
-      ctx.lineDashOffset=reduced?0:-(elapsed*.018+li*18);
+      ctx.lineDashOffset=-(elapsed*.065+li*20);
       ctx.lineWidth=1.2;
       ctx.strokeStyle=b.tone==='red'?'rgba(255,74,84,.65)':b.tone==='green'?'rgba(32,220,150,.55)':'rgba(22,201,255,.48)';
       ctx.beginPath();ctx.moveTo(ap[0],ap[1]);ctx.lineTo(bp[0],bp[1]);ctx.stroke();
       ctx.restore();
-      if(!reduced){
-        const p=((elapsed*.00022+li*.11)%1),px=ap[0]+(bp[0]-ap[0])*p,py=ap[1]+(bp[1]-ap[1])*p;
+      {
+        const p=((elapsed*.00042+li*.11)%1),px=ap[0]+(bp[0]-ap[0])*p,py=ap[1]+(bp[1]-ap[1])*p;
         ctx.beginPath();ctx.arc(px,py,2.2,0,Math.PI*2);ctx.fillStyle=b.tone==='red'?'#ff5862':'#28d9ff';ctx.shadowBlur=10;ctx.shadowColor=ctx.fillStyle;ctx.fill();ctx.shadowBlur=0;
       }
     });
     nodes.forEach((n,i)=>{
-      const bob=reduced?0:Math.sin(elapsed*.0011+i*.75)*3; const [x,y]=worldToScreen(n.x,n.y+bob);
+      const bob=Math.sin(elapsed*.0013+i*.75)*3.5; const [x,y]=worldToScreen(n.x,n.y+bob);
       if(x<-90||x>w+90||y<-90||y>h+90)return;
-      const pulse=reduced?1:1+Math.sin(elapsed*.002+i)*.045; const rr=n.r*scale*pulse;
+      const pulse=1+Math.sin(elapsed*.0022+i)*.055; const rr=n.r*scale*pulse;
       const stroke=n.tone==='red'?'#ff4d58':n.tone==='green'?'#16d89b':n.tone==='blue'?'#159fe0':'#1f3448';
       ctx.beginPath();ctx.arc(x,y,rr,0,Math.PI*2);ctx.fillStyle=i===0||n.tone==='base'?'#101c2b':'#0d202c';ctx.fill();
       ctx.lineWidth=1.3;ctx.strokeStyle=stroke;ctx.shadowBlur=16;ctx.shadowColor=stroke;ctx.stroke();ctx.shadowBlur=0;
@@ -102,7 +108,7 @@
       const parts=title.split('\n'); parts.forEach((line,j)=>ctx.fillText(line,x,y+(j-(parts.length-1)/2)*12*scale));
       ctx.fillStyle='#7890a8';ctx.font=`650 ${Math.max(7.5,8*scale)}px Inter,system-ui,sans-serif`;ctx.fillText(n.sub,x,y+15*scale);
     });
-    if(!reduced)requestAnimationFrame(draw);
+    requestAnimationFrame(draw);
   }
   function pointer(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
   canvas.addEventListener('pointerdown',e=>{drag=true;moved=false;canvas.setPointerCapture(e.pointerId);const p=pointer(e);sx=p.x;sy=p.y;startOx=ox;startOy=oy});
